@@ -1,6 +1,5 @@
 require "setup"
 require "graphical_elemets"
-require "colors"
 
 
 function love.load()
