@@ -15,10 +15,16 @@ function createDeck()
         for suitIndex, suit in ipairs({'club', 'diamond', 'heart', 'spade'}) do
             for rank = 1, 13 do
                 table.insert(result, {suit = suit, rank = rank})
-                -- Temporary
-                print('suit: '..suit..', rank: '..rank)
             end
         end
+    end
+    -- shuffle deck
+    for i = #result, 2, -1 do
+        local j = math.random(1, i)
+        result[i], result[j] = result[j], result[i]
+    end
+    for i, v in ipairs(result) do
+        print('suit: '..v.suit..', rank: '..v.rank)
     end
     return result
 end
