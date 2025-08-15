@@ -1,6 +1,7 @@
 require "setup"
 require "graphical_elemets"
 
+io.stdout:setvbuf("no")
 
 function love.load()
     setup()
