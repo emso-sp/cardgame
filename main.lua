@@ -6,8 +6,10 @@ io.stdout:setvbuf("no")
 function love.load()
     setup()
     showbutton = true;
-    deck1 = {}
-    deck2 = {}
+    deckPlayer = {}
+    deckCom = {}
+    discardPlayer = {}
+    discardCom = {}
 end
 
 function createDeck()
@@ -53,8 +55,8 @@ function love.mousereleased(mx, my, button, istouch, presses)
             showbutton = false;
             startScreen = false
 
-            print('Total number of cards in deck: '..#deck1)
-            print('Total number of cards in deck: '..#deck2)
+            print('Total number of cards in deck: '..#deckPlayer)
+            print('Total number of cards in deck: '..#deckCom)
         end
     end
 end
