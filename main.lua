@@ -6,10 +6,27 @@ io.stdout:setvbuf("no")
 function love.load()
     setup()
     showbutton = true;
-    deckPlayer = {}
-    deckCom = {}
+    deckPlayer = createDeck()
+    deckCom = createDeck()
     discardPlayer = {}
     discardCom = {}
+end
+
+function shuffle(deck)
+    for i = #deck, 2, -1 do
+        local j = math.random(1, i)
+        deck[i], deck[j] = deck[j], deck[i]
+    end
+    return deck
+end
+
+function printDeck(deck)
+    if #deck == 0 then
+        print('deck is empty')
+    end
+    for i, v in ipairs(deck) do
+        print('suit: '..v.suit..', rank: '..v.rank)
+    end
 end
 
 function createDeck()
@@ -22,13 +39,8 @@ function createDeck()
         end
     end
     -- shuffle deck
-    for i = #result, 2, -1 do
-        local j = math.random(1, i)
-        result[i], result[j] = result[j], result[i]
-    end
-    for i, v in ipairs(result) do
-        print('suit: '..v.suit..', rank: '..v.rank)
-    end
+    result = shuffle(result)
+    
     return result
 end
 
@@ -36,9 +48,15 @@ function playCard(deck)
     return table.remove(deck, 1)
 end
 
+function shuffleDiscardPile(discardPile, deck)
+    print('reshuffle')
+    deck = shuffle(discardPile)
+    discardPile = {}
+    return deck, discardPile
+end
+
 function duel(cardPlayer, cardCom)
     -- who won?
-    print('duel')
     if cardPlayer.rank > cardCom.rank then
         table.insert(discardPlayer, cardPlayer)
         table.insert(discardPlayer, cardCom)
@@ -60,18 +78,37 @@ function love.draw()
         createStartScreen()
     else 
         createIngameScreen()
-        if not next(deckPlayer) then
+        --[[if not next(deckPlayer) then
             deckPlayer = createDeck()
         end
         if not next(deckCom) then
             deckCom = createDeck()
-        end
+        end]]
         -- TODO create card drawing and game mechanics
         -- TODO: check if deck is empty
+        
         local cardPlayer = playCard(deckPlayer)
         local cardCom = playCard(deckCom)
         duel(cardPlayer, cardCom)
 
+        if #deckPlayer == 0 then
+            if #discardPlayer == 0 then
+                print('Player lost the game')
+                love.event.quit()
+            end
+            deckPlayer, discardPlayer = shuffleDiscardPile(discardPlayer, deckPlayer)
+            print('player: ', #deckPlayer + #discardPlayer)
+            print('com: ', #deckCom + #discardCom)
+        end
+        if #deckCom == 0 then
+            if #discardCom == 0 then
+                print('Player won the game')
+                love.event.quit()
+            end
+            deckCom, discardCom = shuffleDiscardPile(discardCom, deckCom)
+            print('player: ', #deckPlayer + #discardPlayer)
+            print('com: ', #deckCom + #discardCom)
+        end
     end
 end
 
