@@ -32,18 +32,46 @@ function createDeck()
     return result
 end
 
+function playCard(deck)
+    return table.remove(deck, 1)
+end
+
+function duel(cardPlayer, cardCom)
+    -- who won?
+    print('duel')
+    if cardPlayer.rank > cardCom.rank then
+        table.insert(discardPlayer, cardPlayer)
+        table.insert(discardPlayer, cardCom)
+    elseif cardPlayer.rank < cardCom.rank then
+        table.insert(discardCom, cardPlayer)
+        table.insert(discardCom, cardCom)
+    else
+        table.insert(discardPlayer, cardPlayer)
+        table.insert(discardCom, cardCom)
+    end
+end
+
+-- TODO: evaluate duell / battle
+
+-- TODO: handle war
+
 function love.draw()
     if startScreen then 
         createStartScreen()
     else 
         createIngameScreen()
-        if not next(deck1) then
-            deck1 = createDeck()
+        if not next(deckPlayer) then
+            deckPlayer = createDeck()
         end
-        if not next(deck2) then
-            deck2 = createDeck()
+        if not next(deckCom) then
+            deckCom = createDeck()
         end
         -- TODO create card drawing and game mechanics
+        -- TODO: check if deck is empty
+        local cardPlayer = playCard(deckPlayer)
+        local cardCom = playCard(deckCom)
+        duel(cardPlayer, cardCom)
+
     end
 end
 
