@@ -72,12 +72,72 @@ function duel(cardPlayer, cardCom)
         table.insert(discardCom, cardPlayer)
         table.insert(discardCom, cardCom)
     else
-        table.insert(discardPlayer, cardPlayer)
-        table.insert(discardCom, cardCom)
+        --table.insert(discardPlayer, cardPlayer)
+        --table.insert(discardCom, cardCom)
+        war(cardPlayer, cardCom)
     end
 end
 
+function checkIfEmpty(deck, discardPile)
+    if #deck == 0 then
+        if #discardPile == 0 then
+            print('game over')
+            if #deckPlayer + #discardPlayer > 0 then
+                print('player won')
+            else
+                print('player lost')
+            end
+            love.event.quit()
+        end
+        deck, discardPile = shuffleDiscardPile(discardPile, deck)
+    end
+    return deck, discardPile
+end
+
 -- TODO: handle war
+function war(cardPlayer, cardCom)
+    print('WE GO TO WAR')
+    local savedCards = {cardPlayer, cardCom}
+
+    local isWar = true
+    while isWar do
+        -- check whether deck and / or discard pile are empty: if both are empty, the game is over, else shuffle discard pile back into deck
+        
+
+        -- draw two cards from each deck and save
+        deckPlayer, discardPlayer = checkIfEmpty(deckPlayer, discardPlayer)
+        table.insert(savedCards, playCard(deckPlayer))
+        deckPlayer, discardPlayer = checkIfEmpty(deckPlayer, discardPlayer)
+        table.insert(savedCards, playCard(deckPlayer))
+        deckCom, discardCom = checkIfEmpty(deckCom, discardCom)
+        table.insert(savedCards, playCard(deckCom))
+        deckCom, discardCom = checkIfEmpty(deckCom, discardCom)
+        table.insert(savedCards, playCard(deckCom))
+
+        -- draw one card from each deck and compare values
+        deckPlayer, discardPlayer = checkIfEmpty(deckPlayer, discardPlayer)
+        newCardPlayer = playCard(deckPlayer)
+        deckCom, discardCom = checkIfEmpty(deckCom, discardCom)
+        newCardCom = playCard(deckCom)
+        table.insert(savedCards, newCardPlayer)
+        table.insert(savedCards, newCardCom)
+
+        if newCardPlayer.rank > newCardCom.rank then
+            for _, card in ipairs(savedCards) do
+                table.insert(discardPlayer, card)
+            end
+            isWar = false
+            print('player won and received '..#savedCards)
+        elseif newCardPlayer.rank < cardCom.rank then
+            for _, card in ipairs(savedCards) do
+                table.insert(discardCom, card)
+            end
+            isWar = false
+            print('com won and received '..#savedCards)
+        end
+    end
+
+end
 
 function love.draw()
     if startScreen then 
