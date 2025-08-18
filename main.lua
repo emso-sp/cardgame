@@ -6,8 +6,10 @@ io.stdout:setvbuf("no")
 function love.load()
     setup()
     showbutton = true;
-    deckPlayer = createDeck()
-    deckCom = createDeck()
+    deck52 = createDeck()
+    deckPlayer = {}
+    deckCom = {}
+    distributeCards(deck52)
     discardPlayer = {}
     discardCom = {}
 end
@@ -44,6 +46,12 @@ function createDeck()
     return result
 end
 
+function distributeCards(deck52)
+    -- distribute the deck of 52 cards and add 26 cards to deckPlayer and to deckCom
+    table.move(deck52, 1, 26, 1, deckPlayer)
+    table.move(deck52, 27, 52, 1, deckCom)
+end
+
 function playCard(deck)
     return table.remove(deck, 1)
 end
@@ -68,8 +76,6 @@ function duel(cardPlayer, cardCom)
         table.insert(discardCom, cardCom)
     end
 end
-
--- TODO: evaluate duell / battle
 
 -- TODO: handle war
 
